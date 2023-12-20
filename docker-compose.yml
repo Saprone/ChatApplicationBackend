@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  postgres-sql:
+    container_name: postgres-sql
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=chatapplication_database
+    ports:
+      - "5432:5432"
+
+  spring-boot-app:
+    container_name: chat-application-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8091:8090"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-sql:5432/chatapplication_database
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      - postgres-sql
